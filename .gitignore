@@ -1,0 +1,24 @@
+# Build directory
+build*
+
+# Object files
+*.o
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects
+*.so
+*.so.*
+
+# Sources
+*.tar.*
+
+# IDE/Editor noise
+*~
+.project
+.cproject
+.settings
+*.patch
+*.diff

@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name=ra-utils
+Description=Library for chargebyte's EEPROM contents
+Version=@PROJECT_VERSION@
+Libs=-L${libdir} -lcb-eeprom-utils
+Cflags=-I${includedir}
