@@ -81,7 +81,7 @@ int main(int argc, char **argv)
     const char *order_code = NULL;
     uint32_t hw_rev = 0;
     void *dt_map = NULL, *sig_map = NULL;
-    size_t dt_size, sig_size;
+    size_t dt_size = 0, sig_size = 0;
     struct cb_dt_eeprom_header hdr;
     int opt;
 
@@ -161,11 +161,11 @@ int main(int argc, char **argv)
 
     fwrite(&hdr, 1, sizeof(hdr), stdout);
 
-    fwrite(dt_map, 1, dt_size, stdout);
+    fwrite(dt_map, dt_size, 1, stdout);
     munmap(dt_map, dt_size);
 
     if (sig_map) {
-        fwrite(sig_map, 1, sig_size, stdout);
+        fwrite(sig_map, sig_size, 1, stdout);
         munmap(sig_map, sig_size);
     }
 
