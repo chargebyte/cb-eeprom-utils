@@ -8,6 +8,25 @@ Tools included so far are:
 - **cb-dt-eeprom**: This tool allows to create an image for the Device Tree EEPROM
   which is recommended for custom carrier boards and is also present on most
   chargebyte's own carrier boards.
+- **cb-eeprom**: This tool reads and prints the EEPROM contents of chargebyte
+  hardware in a shell-compatible format.
+
+`cb-eeprom` checks the SOM EEPROM first and then the Mint/Doublemint EEPROM.
+The EEPROM paths can be overridden with `--som-eeprom`, `--cb-eeprom`, and
+`--dt-eeprom`; without these options the platform default paths are used.
+When a carrier-board EEPROM contains the default hardware revision, a valid
+hardware revision from the DT EEPROM is preferred.
+For example:
+
+    cb-eeprom
+    cb-eeprom som_pcb_dmc
+    cb-eeprom -n cb_serial
+
+Without `-n`, output has the form `variable=value`. With `-n`, only the value
+is printed. Numeric DMCs are printed as 16 digits when their final four bytes
+are zero, otherwise as 24 digits. DMCs beginning with `PT` are interpreted as
+ASCII strings and may either be NUL-terminated or occupy all twelve bytes.
+Serial numbers are printed without leading zeroes.
 
 ## Building and Installation on the Target
 

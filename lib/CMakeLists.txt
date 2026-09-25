@@ -11,6 +11,7 @@ add_library(cb-eeprom-utils SHARED)
 
 target_sources(cb-eeprom-utils
     PRIVATE
+        "cb-eeprom.c"
         "crc32.c"
         "tools.c"
 )
@@ -18,6 +19,7 @@ target_sources(cb-eeprom-utils
 install(
     FILES
         "cb-eeprom-utils.h"
+        "cb-eeprom.h"
         "cb-dt-eeprom.h"
         "crc32.h"
         "tools.h"

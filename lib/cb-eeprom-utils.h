@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 #include "cb-dt-eeprom.h"
+#include "cb-eeprom.h"
 #include "crc32.h"
 #include "tools.h"
 
