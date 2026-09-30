@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 #include <cb-eeprom.h>
+#include <version.h>
 
 /*
  * Note: We use the I2C paths as stable anchors over all products - nvmem path/files differ.
@@ -36,6 +37,7 @@ static void usage(const char *prog)
             "      --som-eeprom <path>  SOM EEPROM path\n"
             "      --cb-eeprom <path>   carrier-board EEPROM path\n"
             "      --dt-eeprom <path>   DT EEPROM path\n"
+            "  -v, --version     show version\n"
             "  -h, --help        show this help\n",
             prog);
 }
@@ -57,13 +59,15 @@ int main(int argc, char **argv)
         { "som-eeprom", required_argument, NULL, 1000 },
         { "cb-eeprom", required_argument, NULL, 1001 },
         { "dt-eeprom", required_argument, NULL, 1002 },
+        { "version",    no_argument,       NULL, 'v' },
         { "help",      no_argument, NULL, 'h' },
         { NULL,        0,           NULL,  0  }
     };
 
-    while ((opt = getopt_long(argc, argv, "nh", options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "nvh", options, NULL)) != -1) {
         switch (opt) {
         case 'n': value_only = 1; break;
+        case 'v': puts(PACKAGE_STRING); return 0;
         case 'h': usage(argv[0]); return 0;
         case 1000: som_eeprom_path = optarg; break;
         case 1001: cb_eeprom_path = optarg; break;

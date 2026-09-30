@@ -9,6 +9,7 @@ add_executable(cb-eeprom
 target_include_directories(cb-dt-eeprom
     PRIVATE
         ${LIBCBEEPROMUTILS_INCLUDE_DIR}
+        ${LIBCBEEPROMUTILS_INCLUDE_BINARY_DIR}
 )
 
 target_link_libraries(cb-dt-eeprom
@@ -19,6 +20,7 @@ target_link_libraries(cb-dt-eeprom
 target_include_directories(cb-eeprom
     PRIVATE
         ${LIBCBEEPROMUTILS_INCLUDE_DIR}
+        ${LIBCBEEPROMUTILS_INCLUDE_BINARY_DIR}
 )
 
 target_link_libraries(cb-eeprom

@@ -18,6 +18,7 @@
 #include <endian.h>
 #include <stddef.h>
 #include <cb-eeprom-utils.h>
+#include <version.h>
 
 static int mmap_file(void **p, size_t *file_size, const char *descr, const char *fn)
 {
@@ -71,6 +72,7 @@ static void usage(const char *prog)
         "  -c, --vendor-code <val>  Vendor code (hex or dec, default 0x63624342 [chargebyte])\n"
         "  -r, --hw-rev <str>       HW revision (e.g. V0R1a)\n"
         "  -o, --order-code <str>   Order code string (max 32 bytes)\n"
+        "  -v, --version            Show version\n"
         "  -h, --help               Show this help\n",
         prog);
 }
@@ -89,11 +91,12 @@ int main(int argc, char **argv)
         { "vendor-code", required_argument, NULL, 'c' },
         { "hw-rev",      required_argument, NULL, 'r' },
         { "order-code",  required_argument, NULL, 'o' },
+        { "version",     no_argument,       NULL, 'v' },
         { "help",        no_argument,       NULL, 'h' },
         { NULL,          0,                 NULL,  0  }
     };
 
-    while ((opt = getopt_long(argc, argv, "c:r:o:h", long_opts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "c:r:o:vh", long_opts, NULL)) != -1) {
         switch (opt) {
         case 'c':
             vendor_code = strtoul(optarg, NULL, 0);
@@ -107,6 +110,9 @@ int main(int argc, char **argv)
         case 'o':
             order_code = optarg;
             break;
+        case 'v':
+            puts(PACKAGE_STRING);
+            return 0;
         case 'h':
         default:
             usage(argv[0]);
