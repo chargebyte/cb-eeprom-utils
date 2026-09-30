@@ -302,7 +302,7 @@ int cb_eeprom_dump_som(const struct cb_eeprom *eeprom, const char *selected,
     result |= emit_mac("mac_cp_host", eeprom->mac_cp_host, selected, value_only, matched);
     result |= emit_mac("mac_cp_firmware", eeprom->mac_cp_firmware, selected, value_only, matched);
     result |= emit_dmc("som_pcb_dmc", eeprom->pcb_dmc, selected, value_only, matched);
-    result |= emit_serial("som_cb_serial", eeprom->cb_serial, selected, value_only, matched);
+    result |= emit_serial("som_serial", eeprom->cb_serial, selected, value_only, matched);
     result |= emit_hw_revision("som_hw_rev", &eeprom->hw_rev, selected, value_only,
                                matched, "V0R2a");
 
