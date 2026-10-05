@@ -191,6 +191,39 @@ static int emit_hw_revision(const char *name, const struct hwrev *revision,
     return 0;
 }
 
+static int valid_hw_revision(const struct hwrev *revision)
+{
+    unsigned int major, minor;
+
+    return bcd_byte(revision->major_bcd, &major) == 0 &&
+           bcd_byte(revision->minor_bcd, &minor) == 0 &&
+           revision->reserved == 0 &&
+           isprint((unsigned char)revision->bom_revision);
+}
+
+static int emit_som_hw_revision(const struct hwrev *revision,
+                                const char *selected, int value_only,
+                                int *matched, const char *unset_hw_revision)
+{
+    if (revision->major_bcd == 0xff && revision->minor_bcd == 0xff &&
+        revision->bom_revision == 0xff && revision->reserved == 0xff) {
+        if (unset_hw_revision)
+            return emit_hw_revision("som_hw_rev", revision, selected, value_only,
+                                    matched, unset_hw_revision);
+
+        fprintf(stderr, "Warning: SOM hardware revision unavailable for unsupported platform\n");
+        return 0;
+    }
+
+    if (!valid_hw_revision(revision)) {
+        fprintf(stderr, "Warning: invalid SOM hardware revision data\n");
+        return 0;
+    }
+
+    return emit_hw_revision("som_hw_rev", revision, selected, value_only,
+                            matched, unset_hw_revision);
+}
+
 int cb_eeprom_read_at(const char *path, void *buffer, size_t length, off_t offset)
 {
     size_t done = 0;
@@ -295,7 +328,8 @@ int cb_eeprom_compatible_contains(const char *buffer, size_t length, const char 
 }
 
 int cb_eeprom_dump_som(const struct cb_eeprom *eeprom, const char *selected,
-                       int value_only, int *matched)
+                       int value_only, int *matched,
+                       const char *unset_hw_revision)
 {
     int result = 0;
 
@@ -303,8 +337,8 @@ int cb_eeprom_dump_som(const struct cb_eeprom *eeprom, const char *selected,
     result |= emit_mac("mac_cp_firmware", eeprom->mac_cp_firmware, selected, value_only, matched);
     result |= emit_dmc("som_pcb_dmc", eeprom->pcb_dmc, selected, value_only, matched);
     result |= emit_serial("som_serial", eeprom->cb_serial, selected, value_only, matched);
-    result |= emit_hw_revision("som_hw_rev", &eeprom->hw_rev, selected, value_only,
-                               matched, "V0R2a");
+    result |= emit_som_hw_revision(&eeprom->hw_rev, selected, value_only, matched,
+                                   unset_hw_revision);
 
     return result;
 }
@@ -383,11 +417,41 @@ static const struct cb_eeprom_mapping mappings[] = {
     },
 };
 
+static const struct cb_som_eeprom_mapping som_mappings[] = {
+    {
+        "chargebyte,imx93-charge-som",
+        "V0R2a",
+    },
+    {
+        "chargebyte,imx93-charge-control-y",
+        "V0R5a",
+    },
+    {
+        "chargebyte,imx93-lime",
+        "V0R1a",
+    },
+    {
+        "chargebyte,imx93-protolime",
+        "V0R1a",
+    },
+};
+
 const struct cb_eeprom_mapping *cb_eeprom_find_mapping(const char *buffer, size_t length)
 {
     for (size_t i = 0; i < sizeof(mappings) / sizeof(mappings[0]); i++) {
         if (cb_eeprom_compatible_contains(buffer, length, mappings[i].compatible))
             return &mappings[i];
+    }
+
+    return NULL;
+}
+
+const struct cb_som_eeprom_mapping *cb_eeprom_find_som_mapping(const char *buffer,
+                                                               size_t length)
+{
+    for (size_t i = 0; i < sizeof(som_mappings) / sizeof(som_mappings[0]); i++) {
+        if (cb_eeprom_compatible_contains(buffer, length, som_mappings[i].compatible))
+            return &som_mappings[i];
     }
 
     return NULL;

@@ -50,6 +50,7 @@ int main(int argc, char **argv)
     int value_only = 0;
     int som_present, cb_present;
     int matched = 0;
+    const struct cb_som_eeprom_mapping *som_mapping = NULL;
     int opt;
     const char *som_eeprom_path = SOM_EEPROM_PATH;
     const char *cb_eeprom_path = RV3028_EEPROM_PATH;
@@ -88,10 +89,17 @@ int main(int argc, char **argv)
         fprintf(stderr, "Error: no supported EEPROM device found\n");
         return 1;
     }
+    if (som_present || cb_present) {
+        if (cb_eeprom_read_compatible(compatible, sizeof(compatible),
+                                       &compatible_length) != 0)
+            return 1;
+        som_mapping = cb_eeprom_find_som_mapping(compatible, compatible_length);
+    }
     if (som_present) {
         struct cb_eeprom eeprom;
         if (cb_eeprom_read_at(som_eeprom_path, &eeprom, sizeof(eeprom), 256) != 0 ||
-            cb_eeprom_dump_som(&eeprom, selected, value_only, &matched) != 0)
+            cb_eeprom_dump_som(&eeprom, selected, value_only, &matched,
+                               som_mapping ? som_mapping->unset_hw_revision : NULL) != 0)
             return 1;
     }
     if (cb_present) {
@@ -100,9 +108,6 @@ int main(int argc, char **argv)
         struct hwrev dt_hw_revision;
         const struct hwrev *dt_hw_revision_ptr = NULL;
 
-        if (cb_eeprom_read_compatible(compatible, sizeof(compatible),
-                                       &compatible_length) != 0)
-            return 1;
         mapping = cb_eeprom_find_mapping(compatible, compatible_length);
         if (!mapping) {
             fprintf(stderr, "Error: unsupported platform in /proc/device-tree/compatible\n");

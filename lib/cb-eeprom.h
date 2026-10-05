@@ -58,6 +58,11 @@ struct cb_eeprom_mapping {
     const char *unset_hw_revision;
 };
 
+struct cb_som_eeprom_mapping {
+    const char *compatible;
+    const char *unset_hw_revision;
+};
+
 _Static_assert(sizeof(struct hwrev) == 4, "unexpected hwrev size");
 _Static_assert(sizeof(struct cb_eeprom) == 38, "unexpected SOM EEPROM size");
 _Static_assert(sizeof(struct cb_mint_eeprom) == 22, "unexpected Mint EEPROM size");
@@ -70,5 +75,8 @@ int cb_eeprom_compatible_contains(const char *buffer, size_t length,
                                   const char *value);
 const struct cb_eeprom_mapping *cb_eeprom_find_mapping(const char *buffer,
                                                        size_t length);
+const struct cb_som_eeprom_mapping *cb_eeprom_find_som_mapping(const char *buffer,
+                                                               size_t length);
 int cb_eeprom_dump_som(const struct cb_eeprom *eeprom, const char *selected,
-                       int value_only, int *matched);
+                       int value_only, int *matched,
+                       const char *unset_hw_revision);
