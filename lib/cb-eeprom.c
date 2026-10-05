@@ -169,8 +169,10 @@ static int emit_hw_revision(const char *name, const struct hwrev *revision,
     char value[16];
     int written;
 
-    if (revision->major_bcd == 0xaa && revision->minor_bcd == 0x55 &&
-        revision->bom_revision == 0xaa && revision->reserved == 0x55) {
+    if ((revision->major_bcd == 0xaa && revision->minor_bcd == 0x55 &&
+         revision->bom_revision == 0xaa && revision->reserved == 0x55) ||
+        (revision->major_bcd == 0xff && revision->minor_bcd == 0xff &&
+         revision->bom_revision == 0xff && revision->reserved == 0xff)) {
         *matched += print_assignment(name, fallback, selected, value_only);
         return 0;
     }
